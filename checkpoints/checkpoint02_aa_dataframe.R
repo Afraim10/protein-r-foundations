@@ -1,16 +1,24 @@
-amino_acids = c("Tryptophan", "Tyrosine", "Valine", "Proline", "Methionine","Lysine")
-one_letter_code = c("W", "Y", "V", "P", "M", "K")
-hydrophobicity = c(-0.9, -1.3, 	4.2, 	-1.6,1.9, -3.9)
+# Checkpoint 02 - Amino Acid Property Table
+amino_acid <- c("Tryptophan", "Tyrosine", "Valine", "Proline", "Methionine", "Lysine")
+one_letter_code <- c("W", "Y", "V", "P", "M", "K")
+hydrophobicity <- c(-0.9, -1.3, 4.2, -1.6, 1.9, -3.9)  # Kyte-Doolittle scale
 
-amino_letters_hydro = data.frame( amino_acids, one_letter_code, hydrophobicity)
+aa_table <- data.frame(amino_acid, one_letter_code, hydrophobicity)
 
-class(amino_letters_hydro)
-str(amino_letters_hydro)
-tryptophan = amino_letters_hydro$amino_acids[1]
-tryptophan_letter = amino_letters_hydro$one_letter_code[1]
-tryptophan_hydrophobicity = amino_letters_hydro$hydrophobicity[1]
+print(class(aa_table))
+str(aa_table)
 
-cat(" Amino Acid:", tryptophan,"\n", "Letter Code:", tryptophan_letter,"\n", "Hydrophobic Charachter:", tryptophan_hydrophobicity,"\n")
-print(amino_letters_hydro)
+hydrophobicity_col <- aa_table$hydrophobicity
+print(class(hydrophobicity_col))
 
-mean(amino_letters_hydro$hydrophobicity)
+tryptophan_name <- aa_table$amino_acid[1]
+tryptophan_letter <- aa_table$one_letter_code[1]
+tryptophan_hydrophobicity <- aa_table$hydrophobicity[1]
+
+cat("Amino Acid:", tryptophan_name, "\n")
+cat("Letter Code:", tryptophan_letter, "\n")
+cat("Hydrophobicity:", tryptophan_hydrophobicity, "\n")
+
+print(aa_table)
+
+print(mean(aa_table$hydrophobicity))
