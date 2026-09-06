@@ -1,4 +1,4 @@
-# protein-r-foundations
+# Protein R Foundations
 
 Practice repository for R fundamentals, worked through small biology-flavored
 problems instead of the course's own generic examples.
@@ -57,3 +57,12 @@ script upfront.
 
 In progress. Checkpoints are added as the course is completed, section by
 section.
+
+- [x] Checkpoint 01 — Primer melting temperature (Wallace rule)
+- [x] Checkpoint 02 — Amino acid property table (Kyte-Doolittle hydrophobicity)
+- [x] Checkpoint 03 — GC content ranking across multiple sequences
+- [ ] Checkpoint 04 — Residue position lookup in a toy protein sequence (in-progress)
+- [ ] Checkpoint 05 — Bar plot of an amino acid property 
+- [ ] Checkpoint 06 — Codon-to-amino-acid translator
+- [ ] Final Project — Amino Acid Properties Dashboard
+
