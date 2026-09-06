@@ -1,5 +1,9 @@
 # Protein R Foundations
 
+<div data-importer="image" align="left">
+  <img data-importer="image" height="350" src="https://i.postimg.cc/vZR3wnHz/f3ad92ff-2bc0-4464-b1e0-003da9bbe9cb.png"  />
+</div>
+
 Practice repository for R fundamentals, worked through small biology-flavored
 problems instead of the course's own generic examples.
 
