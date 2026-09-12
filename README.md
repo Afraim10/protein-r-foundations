@@ -9,8 +9,8 @@ problems instead of the course's own generic examples.
 
 <div data-importer="techs" align="left">
   <img src="https://img.shields.io/badge/r-%23276DC3.svg?style=for-the-badge&logo=r&logoColor=white" height="40" alt="R"  />
-  <img width="1" />
-  <img src="https://i.postimg.cc/G3FvrM8F/3fcb3ec3-6ece-4866-a81d-c6900bf4856f.png" height="27" alt="RStudio logo"  />
+ <img width="1" />
+  <img src="https://img.shields.io/badge/RStudio-75AADB?logo=rstudioide&logoColor=black&style=for-the-badge" height="40" alt="rstudio logo"  />
   <img width="1" />
   <img src="https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white&style=for-the-badge" height="40" alt="ubuntu logo"  />
   <img width="1" />
