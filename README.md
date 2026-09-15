@@ -81,5 +81,5 @@ section.
 - [x] Checkpoint 04 — Residue position lookup in a toy protein sequence 
 - [x] Checkpoint 05 — Bar plot of an amino acid property 
 - [x] Checkpoint 06 — Codon-to-amino-acid translator
-- [ ] Final Project — Amino Acid Properties Dashboard (in-progress)
+- [x] Final Project — Amino Acid Properties Dashboard
 
