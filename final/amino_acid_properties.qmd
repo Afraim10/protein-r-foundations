@@ -4,7 +4,7 @@ subtitle: "protein-r-foundations — Final Project (Project 0-B)"
 author: "Afraim Mario Mokhtar Boshra"
 date: today
 format:
-  html:
+  pdf:
     self-contained: true
     toc: true
 ---
@@ -16,6 +16,8 @@ This project applies R and ggplot2 to the analysis and visualization of physicoc
 ## Setup
 
 ```{r setup}
+#| message: false
+
 knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo"))
 library(ggplot2)
 library(Peptides)
@@ -209,6 +211,7 @@ egfr_hydrophob <- data.frame(Position = positions,
                              Hydrophobicity = hydro_values)
 
 plot4 <- ggplot(egfr_hydrophob, aes(x = Position, y = Hydrophobicity)) + 
+  theme_minimal(base_size = 10) +
   geom_line(colour = "#999999", linewidth = 1) + 
   geom_area( fill = "#0072B2", alpha = 0.3) + 
   geom_hline(yintercept = 0, linetype = "dashed", colour = "red", linewidth = 0.3) + 
