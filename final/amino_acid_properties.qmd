@@ -16,7 +16,6 @@ This project applies R and ggplot2 to the analysis and visualization of physicoc
 ## Setup
 
 ```{r setup}
-#| include: false
 knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo"))
 library(ggplot2)
 library(Peptides)
@@ -35,10 +34,15 @@ data("AAdata")
 Before constructing the analysis table, the relevant Peptides functions and data objects were inspected to verify their arguments, output structure, and property definitions. Particular attention was given to the hydrophobicity scale, theoretical pI calculation, amino-acid list, and the package's amino-acid property data. This inspection step was used to distinguish package-derived reference values from calculated sequence-level properties before constructing the downstream analyses.
 
 ```{r}
-Peptides::charge("MTKRCF") #charge(seq, pH = 7, pKscale = "Lehninger") where it requires an amino-acids sequence
+Peptides::charge("MTKRCF") # charge(seq, pH = 7, pKscale = "Lehninger") 
+# where it requires an amino-acids sequence
+
 Peptides::aaList()
 args(hydrophobicity)
-pI("MTKRCF") # pI(seq, pKscale = "EMBOSS") where it requires an amino-acids sequence, must be one of "Bjellqvist", "EMBOSS", "Murray", "Sillero", "Solomon", "Stryer", "Lehninger", "Dawson" or "Rodwell"
+
+pI("MTKRCF") # pI(seq, pKscale = "EMBOSS") where it requires an amino-acids sequence, 
+# must be one of "Bjellqvist", "EMBOSS", "Murray", "Sillero", "Solomon", etc..
+
 str(AAdata$Hydrophobicity$KyteDoolittle)
 ```
 
@@ -47,11 +51,16 @@ str(AAdata$Hydrophobicity$KyteDoolittle)
 ```{r build-table}
 # Amino acid
 amino_acids <- Peptides::aaList()
-aa_name <- c("A"="Alanine","C"="Cysteine","D"="Aspartic acid","E"="Glutamic acid",
-             "F"="Phenylalanine","G"="Glycine","H"="Histidine","I"="Isoleucine",
-             "K"="Lysine","L"="Leucine","M"="Methionine","N"="Asparagine",
-             "P"="Proline","Q"="Glutamine","R"="Arginine","S"="Serine",
-             "T"="Threonine","V"="Valine","W"="Tryptophan","Y"="Tyrosine")
+aa_name <- c("A"="Alanine","C"="Cysteine",
+             "D"="Aspartic acid","E"="Glutamic acid",
+             "F"="Phenylalanine","G"="Glycine",
+             "H"="Histidine","I"="Isoleucine",
+             "K"="Lysine","L"="Leucine",
+             "M"="Methionine","N"="Asparagine",
+             "P"="Proline","Q"="Glutamine",
+             "R"="Arginine","S"="Serine",
+             "T"="Threonine","V"="Valine",
+             "W"="Tryptophan","Y"="Tyrosine")
 
 # Hydrophobicity (Kyte–Doolittle)
 aa_hydrophob <- Peptides::hydrophobicity(amino_acids, scale = "KyteDoolittle")
@@ -60,11 +69,21 @@ aa_hydrophob <- Peptides::hydrophobicity(amino_acids, scale = "KyteDoolittle")
 aa_pI <- Peptides::pI(amino_acids, pKscale = "Bjellqvist")
 
 # Charge classification at pH 7.4
-aa_charge <- c("A"="Uncharged (Neutral)","C"="Uncharged (Neutral)","D"="Negatively Charged (Acidic)","E"="Negatively Charged (Acidic)","F"="Uncharged (Neutral)","G"="Uncharged (Neutral)","H"="Positively Charged (Basic)","I"="Uncharged (Neutral)","K"="Positively Charged (Basic)","L"="Uncharged (Neutral)","M"="Uncharged (Neutral)",
-               "N"="Uncharged (Neutral)","P"="Uncharged (Neutral)","Q"="Uncharged (Neutral)","R"="Positively Charged (Basic)","S"="Uncharged (Neutral)","T"="Uncharged (Neutral)","V"="Uncharged (Neutral)","W"="Uncharged (Neutral)","Y"="Uncharged (Neutral)")
+aa_charge <- c("A"="Uncharged (Neutral)","C"="Uncharged (Neutral)",
+               "D"="Negatively Charged (Acidic)","E"="Negatively Charged (Acidic)",
+               "F"="Uncharged (Neutral)","G"="Uncharged (Neutral)",
+               "H"="Positively Charged (Basic)","I"="Uncharged (Neutral)",
+               "K"="Positively Charged (Basic)","L"="Uncharged (Neutral)",
+               "M"="Uncharged (Neutral)", "N"="Uncharged (Neutral)",
+               "P"="Uncharged (Neutral)","Q"="Uncharged (Neutral)",
+               "R"="Positively Charged (Basic)","S"="Uncharged (Neutral)",
+               "T"="Uncharged (Neutral)","V"="Uncharged (Neutral)",
+               "W"="Uncharged (Neutral)","Y"="Uncharged (Neutral)")
 
 
-aa_table_frame <- data.frame(amino_acids, aa_hydrophob, aa_pI, aa_name = aa_name[amino_acids], aa_charge = aa_charge[amino_acids])
+aa_table_frame <- data.frame(amino_acids, aa_hydrophob, aa_pI, 
+                             aa_name = aa_name[amino_acids], 
+                             aa_charge = aa_charge[amino_acids])
 
 
 ```
@@ -111,7 +130,13 @@ charge_colors <- c("Negatively Charged (Acidic)" = "#D55E00",
                    "Positively Charged (Basic)" = "#0072B2")
 
 plot2 <- aa_table_frame |> ggplot(aes(aa_hydrophob, aa_pI, label = amino_acids))
-plot2 + theme_minimal(base_size = 10) + geom_point(aes(col = aa_charge), size = 3) + geom_text_repel(col= "black") + xlab("Hydrophobicity (Kyte–Doolittle) Scale") + ylab("Predicted pI (Bjellqvist model, single-residue input)") + ggtitle("Relationship Between Hydrophobicity and Isoelectric Point") + labs(col = "Charge Class") + scale_color_manual(values = charge_colors) +
+plot2 + theme_minimal(base_size = 10) + geom_point(aes(col = aa_charge), 
+                                                   size = 3) + 
+  geom_text_repel(col= "black") + 
+  xlab("Hydrophobicity (Kyte–Doolittle) Scale") + 
+  ylab("Predicted pI (Bjellqvist model, single-residue input)") + 
+  ggtitle("Relationship Between Hydrophobicity and Isoelectric Point") + 
+  labs(col = "Charge Class") + scale_color_manual(values = charge_colors) +
   theme(plot.title    = element_text(face = "bold"),
         axis.title    = element_text(face = "bold"),
         axis.line     = element_line(linewidth = 0.4),
@@ -122,9 +147,9 @@ plot2 + theme_minimal(base_size = 10) + geom_point(aes(col = aa_charge), size = 
 
 ```
 
-## EGFR Residue Composition Across Physicochemical Categories
+## EGFR Sequence Analysis
 
-The EGFR kinase-domain sequence was obtained from the canonical P00533 UniProt entry using the annotated protein kinase domain feature (residues 712–979). The corresponding sequence was then analyzed independently using the Kyte–Doolittle hydropathy scale.
+The canonical human EGFR sequence was analyzed to demonstrate how amino-acid physicochemical properties can be examined in the context of a real protein sequence. Residue composition was summarized across the physicochemical categories provided by `Peptides::aaComp()`, while the annotated kinase domain (residues 712–979) was analyzed using a sliding-window Kyte–Doolittle hydropathy profile.
 
 ```{r fig.width=12, fig.height=6} 
 
@@ -134,7 +159,7 @@ egfr <- paste(egfr_seq, collapse = "")
 stopifnot(nchar(egfr) == 1210)
 
 
-safe_colors <- c("Acidic" = "#000000",   
+safe_colors <- c("Acidic" = "#454545",   
                    "Aliphatic"  = "#E69F00",   
                    "Aromatic" = "#56B4E9",
                    "Basic" = "#009E73",
@@ -149,18 +174,23 @@ residues_table <- data.frame(residue_freq)
 
 residues_long <- residues_table |> rownames_to_column("Category")
 
-residues_long <- residues_long |> mutate(Category = factor(Category, levels = Category[order(Number)])) 
+residues_long <- residues_long |> 
+  mutate(Category = factor(Category, levels = Category[order(Number)])) 
 
 plot3 <- ggplot(residues_long, aes(Category,Number,
                           label = Number)) +
-  geom_col(aes(fill = Category), width = 0.5, color = "#191919", linewidth = 0.3, show.legend = FALSE) +
+  geom_col(aes(fill = Category), width = 0.5, color = "black", linewidth = 0.3,
+           show.legend = FALSE) +
   labs(x = "Physicochemical category",
        y = "Number of residues",
-       title = "EGFR Residue Composition Across Physicochemical Categories", subtitle = "Physicochemical categories are not mutually exclusive.") + scale_fill_manual(values = safe_colors) +
+       title = "EGFR Residue Composition Across Physicochemical Categories",
+       subtitle = "Physicochemical categories are not mutually exclusive.") + 
+  scale_fill_manual(values = safe_colors) +
   theme_minimal(base_size = 10) +
-  theme(plot.title    = element_text(face = "bold"),
-        axis.title    = element_text(face = "bold"),
-        axis.text.x   = element_text(face = "bold", angle = 45, hjust = 1), axis.line   = element_line(linewidth = 0.5))
+  theme(plot.title = element_text(face = "bold"),
+        axis.title = element_text(face = "bold"),
+        axis.text.x = element_text(face = "bold", angle = 45, hjust = 1),
+        axis.line = element_line(linewidth = 0.5))
 
 
 
@@ -175,17 +205,29 @@ hydro_values <- vapply(positions, function(i) {
   hydrophobicity(sub_seq, scale = "KyteDoolittle")
 }, numeric(1))
 
-egfr_hydrophob <- data.frame(Position = positions, Hydrophobicity = hydro_values)
+egfr_hydrophob <- data.frame(Position = positions, 
+                             Hydrophobicity = hydro_values)
 
-plot4 <- ggplot(egfr_hydrophob, aes(x = Position, y = Hydrophobicity)) + geom_line(colour = "#999999", linewidth = 1) + geom_area( fill = "#0072B2", alpha = 0.3) + geom_hline(yintercept = 0, linetype = "dashed", colour = "red", linewidth = 0.3) + labs(title = "EGFR Kinase Domain Local Hydrophobicity Profile",
-                                                   x = "20-Residue Window Start Position",
-                                                   y = "Hydrophobicity (Kyte–Doolittle) Scale") +            theme(plot.title    = element_text(face = "bold"),
+plot4 <- ggplot(egfr_hydrophob, aes(x = Position, y = Hydrophobicity)) + 
+  geom_line(colour = "#999999", linewidth = 1) + 
+  geom_area( fill = "#0072B2", alpha = 0.3) + 
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red", linewidth = 0.3) + 
+  labs(title = "EGFR Kinase Domain Local Hydrophobicity Profile",
+       x = "20-Residue Window Start Position",
+       y = "Hydrophobicity (Kyte–Doolittle) Scale") + 
+  theme(plot.title    = element_text(face = "bold"),
         axis.title    = element_text(face = "bold"),
-        axis.text.x   = element_text(face = "bold"), axis.line   = element_line(linewidth = 0.5))
+        axis.text.x   = element_text(face = "bold"), 
+        axis.line   = element_line(linewidth = 0.5))
 
 grid.arrange(plot3, plot4, ncol = 2)
 
 ```
+
+### Interpretation
+
+The kinase-domain hydropathy profile was compared with conserved motifs characteristic of the eukaryotic protein-kinase catalytic domain. EGFR contains the glycine-rich P-loop `GSGAFG` at residues 719–724, the conserved ATP-binding lysine K745 within the VAIK motif, the HRD motif at residues 835–837 containing the catalytic Asp837, and the DFG motif at residues 855–857. These motifs occupy regions of relatively reduced hydrophobicity in the resulting profile. The global hydrophobic maximum occurs in the window beginning at residue 780 (`ICLTSTVQLITQLMPFGCLL`), whereas the global hydrophilic minimum begins at residue 745, placing K745 at the beginning of this window. These observations provide a sequence-level comparison between the computed hydropathy profile and the established organization of conserved kinase functional motifs. The correspondence should be interpreted as a biological comparison of sequence-derived properties rather than evidence that hydropathy alone determines residue accessibility, structural burial, or catalytic function.
+
 
 ## Limitations
 
@@ -201,11 +243,14 @@ Consequently, the results should be interpreted as a compact representation of a
 
 ## Data sources
 
-- Osorio, D., Rondón-Villarreal, P. & Torres, R. (2015). Peptides: A package for data mining of antimicrobial   peptides. *The R Journal*, 7(1), 4–14.
-- `Peptides` R package, version 2.4.6, documentation and data objects used for amino-acid physicochemical       calculations.
+- Osorio, D., Rondón-Villarreal, P. & Torres, R. (2015). Peptides: A package for data mining   of antimicrobial   peptides. *The R Journal*, 7(1), 4–14.
+- `Peptides` R package, version 2.4.6, documentation and data objects used for amino-acid   
+  physicochemical calculations.
 - UniProt Consortium. UniProtKB P00533 — Epidermal growth factor
   receptor (EGFR), Homo sapiens. The canonical sequence was used for
   EGFR composition analysis, and the UniProt-annotated protein kinase
   domain (residues 712–979) was used for the local hydrophobicity
-  analysis (PROSITE-ProRule: PRU00159).
+  analysis [PROSITE-ProRule: PRU00159](https://prosite.expasy.org/rule/PRU00159).
+- [Hanks, S. K., & Hunter, T. (1995). The eukaryotic protein kinase superfamily:
+  kinase (catalytic) domain structure and classification. FASEB Journal, 9(8), 576–596.](https://doi.org/10.1096/fasebj.9.8.7768349)
   
