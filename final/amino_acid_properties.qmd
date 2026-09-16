@@ -1,0 +1,211 @@
+---
+title: "Amino Acid Physicochemical Properties"
+subtitle: "protein-r-foundations — Final Project (Project 0-B)"
+author: "Afraim Mario Mokhtar Boshra"
+date: today
+format:
+  html:
+    self-contained: true
+    toc: true
+---
+
+## Purpose
+
+This project applies R and ggplot2 to the analysis and visualization of physicochemical properties of the 20 canonical amino acids. It serves as Project 0-B of the Computational Proteomics Master Plan and is intended as a foundational exercise in reproducible biological data analysis rather than as a research study. Amino acid property data are obtained from the Peptides R package and inspected before being assembled into an analysis-ready table, using the Kyte–Doolittle hydropathy scale for hydrophobicity and the Bjellqvist pKa scale for theoretical isoelectric-point calculation. The resulting visualizations examine the distribution of amino-acid hydrophobicity, the relationship between hydrophobicity and theoretical pI, the physicochemical composition of the canonical EGFR sequence, and local hydrophobicity across the annotated EGFR kinase domain.
+
+## Setup
+
+```{r setup}
+#| include: false
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo"))
+library(ggplot2)
+library(Peptides)
+library(ggrepel)
+library(dplyr)
+library(tibble)
+library(readr)
+library(gridExtra)
+data("AAdata")
+
+
+```
+
+## Inspect before you build
+
+Before constructing the analysis table, the relevant Peptides functions and data objects were inspected to verify their arguments, output structure, and property definitions. Particular attention was given to the hydrophobicity scale, theoretical pI calculation, amino-acid list, and the package's amino-acid property data. This inspection step was used to distinguish package-derived reference values from calculated sequence-level properties before constructing the downstream analyses.
+
+```{r}
+Peptides::charge("MTKRCF") #charge(seq, pH = 7, pKscale = "Lehninger") where it requires an amino-acids sequence
+Peptides::aaList()
+args(hydrophobicity)
+pI("MTKRCF") # pI(seq, pKscale = "EMBOSS") where it requires an amino-acids sequence, must be one of "Bjellqvist", "EMBOSS", "Murray", "Sillero", "Solomon", "Stryer", "Lehninger", "Dawson" or "Rodwell"
+str(AAdata$Hydrophobicity$KyteDoolittle)
+```
+
+## Data and Property Definitions
+
+```{r build-table}
+# Amino acid
+amino_acids <- Peptides::aaList()
+aa_name <- c("A"="Alanine","C"="Cysteine","D"="Aspartic acid","E"="Glutamic acid",
+             "F"="Phenylalanine","G"="Glycine","H"="Histidine","I"="Isoleucine",
+             "K"="Lysine","L"="Leucine","M"="Methionine","N"="Asparagine",
+             "P"="Proline","Q"="Glutamine","R"="Arginine","S"="Serine",
+             "T"="Threonine","V"="Valine","W"="Tryptophan","Y"="Tyrosine")
+
+# Hydrophobicity (Kyte–Doolittle)
+aa_hydrophob <- Peptides::hydrophobicity(amino_acids, scale = "KyteDoolittle")
+
+# pI pKscale of Bjellqvist
+aa_pI <- Peptides::pI(amino_acids, pKscale = "Bjellqvist")
+
+# Charge classification at pH 7.4
+aa_charge <- c("A"="Uncharged (Neutral)","C"="Uncharged (Neutral)","D"="Negatively Charged (Acidic)","E"="Negatively Charged (Acidic)","F"="Uncharged (Neutral)","G"="Uncharged (Neutral)","H"="Positively Charged (Basic)","I"="Uncharged (Neutral)","K"="Positively Charged (Basic)","L"="Uncharged (Neutral)","M"="Uncharged (Neutral)",
+               "N"="Uncharged (Neutral)","P"="Uncharged (Neutral)","Q"="Uncharged (Neutral)","R"="Positively Charged (Basic)","S"="Uncharged (Neutral)","T"="Uncharged (Neutral)","V"="Uncharged (Neutral)","W"="Uncharged (Neutral)","Y"="Uncharged (Neutral)")
+
+
+aa_table_frame <- data.frame(amino_acids, aa_hydrophob, aa_pI, aa_name = aa_name[amino_acids], aa_charge = aa_charge[amino_acids])
+
+
+```
+
+## Visualizations
+
+### Hydrophobicity of the 20 Canonical Amino Acids
+
+```{r plot-1}
+charge_colors <- c("Negatively Charged (Acidic)" = "#D55E00",
+                   "Uncharged (Neutral)"         = "#999999",
+                   "Positively Charged (Basic)"  = "#0072B2")
+
+aa_plot <- aa_table_frame |>
+  mutate(aa_name = factor(aa_name, levels = aa_name[order(aa_hydrophob)]))
+
+plot1 <- ggplot(aa_plot, aes(aa_name, aa_hydrophob, label = amino_acids))
+
+plot1 +
+  geom_col(aes(fill = aa_charge), width = 0.9, color = "black", linewidth = 0.3) +
+  geom_text(aes(vjust = ifelse(aa_hydrophob >= 0, -0.4, 1.4)), size = 2.7) +
+  scale_fill_manual(values = charge_colors) +
+  scale_y_continuous(expand = expansion(mult = c(0.08, 0.08))) +
+  labs(x = "Amino Acid (ranked by hydrophobicity)",
+       y = "Hydrophobicity (Kyte–Doolittle) Scale",
+       fill = "Charge Class",
+       title = "Hydrophobicity of the 20 Canonical Amino Acids") +
+  theme_minimal(base_size = 10) +
+  theme(plot.title    = element_text(face = "bold"),
+        axis.title    = element_text(face = "bold"),
+        axis.text.x   = element_text(angle = 45, hjust = 1, face = "bold"),
+        axis.line     = element_line(linewidth = 0.5),
+        axis.ticks    = element_line(linewidth = 0.5),
+        legend.position = "top", legend.direction = "horizontal")
+
+```
+
+### Relationship Between Hydrophobicity and Isoelectric Point
+
+```{r plot-2}
+
+charge_colors <- c("Negatively Charged (Acidic)" = "#D55E00",   
+                   "Uncharged (Neutral)"  = "#999999",   
+                   "Positively Charged (Basic)" = "#0072B2")
+
+plot2 <- aa_table_frame |> ggplot(aes(aa_hydrophob, aa_pI, label = amino_acids))
+plot2 + theme_minimal(base_size = 10) + geom_point(aes(col = aa_charge), size = 3) + geom_text_repel(col= "black") + xlab("Hydrophobicity (Kyte–Doolittle) Scale") + ylab("Predicted pI (Bjellqvist model, single-residue input)") + ggtitle("Relationship Between Hydrophobicity and Isoelectric Point") + labs(col = "Charge Class") + scale_color_manual(values = charge_colors) +
+  theme(plot.title    = element_text(face = "bold"),
+        axis.title    = element_text(face = "bold"),
+        axis.line     = element_line(linewidth = 0.4),
+        axis.ticks    = element_line(linewidth = 0.4),
+        legend.position = "top", legend.direction = "horizontal")
+
+
+
+```
+
+## EGFR Residue Composition Across Physicochemical Categories
+
+The EGFR kinase-domain sequence was obtained from the canonical P00533 UniProt entry using the annotated protein kinase domain feature (residues 712–979). The corresponding sequence was then analyzed independently using the Kyte–Doolittle hydropathy scale.
+
+```{r fig.width=12, fig.height=6} 
+
+fasta_line <- read_lines("https://rest.uniprot.org/uniprotkb/P00533.fasta")
+egfr_seq <- fasta_line[2:length(fasta_line)]
+egfr <- paste(egfr_seq, collapse = "")
+stopifnot(nchar(egfr) == 1210)
+
+
+safe_colors <- c("Acidic" = "#000000",   
+                   "Aliphatic"  = "#E69F00",   
+                   "Aromatic" = "#56B4E9",
+                   "Basic" = "#009E73",
+                   "Charged" = "#F0E442",
+                   "NonPolar" = "#0072B2",
+                   "Polar"= "#D55E00",
+                   "Small"= "#CC79A7",
+                   "Tiny"="#999999")
+
+residue_freq <- Peptides::aaComp(egfr)
+residues_table <- data.frame(residue_freq)
+
+residues_long <- residues_table |> rownames_to_column("Category")
+
+residues_long <- residues_long |> mutate(Category = factor(Category, levels = Category[order(Number)])) 
+
+plot3 <- ggplot(residues_long, aes(Category,Number,
+                          label = Number)) +
+  geom_col(aes(fill = Category), width = 0.5, color = "#191919", linewidth = 0.3, show.legend = FALSE) +
+  labs(x = "Physicochemical category",
+       y = "Number of residues",
+       title = "EGFR Residue Composition Across Physicochemical Categories", subtitle = "Physicochemical categories are not mutually exclusive.") + scale_fill_manual(values = safe_colors) +
+  theme_minimal(base_size = 10) +
+  theme(plot.title    = element_text(face = "bold"),
+        axis.title    = element_text(face = "bold"),
+        axis.text.x   = element_text(face = "bold", angle = 45, hjust = 1), axis.line   = element_line(linewidth = 0.5))
+
+
+
+egfr_kinase_domain <- substr(egfr, 712, 979)
+
+amino_acids_window <- 20
+egfr_kd_length <- nchar(egfr_kinase_domain)
+positions <- 1:(egfr_kd_length - amino_acids_window + 1)
+
+hydro_values <- vapply(positions, function(i) {
+  sub_seq <- substr(egfr_kinase_domain, i, i + amino_acids_window - 1)
+  hydrophobicity(sub_seq, scale = "KyteDoolittle")
+}, numeric(1))
+
+egfr_hydrophob <- data.frame(Position = positions, Hydrophobicity = hydro_values)
+
+plot4 <- ggplot(egfr_hydrophob, aes(x = Position, y = Hydrophobicity)) + geom_line(colour = "#999999", linewidth = 1) + geom_area( fill = "#0072B2", alpha = 0.3) + geom_hline(yintercept = 0, linetype = "dashed", colour = "red", linewidth = 0.3) + labs(title = "EGFR Kinase Domain Local Hydrophobicity Profile",
+                                                   x = "20-Residue Window Start Position",
+                                                   y = "Hydrophobicity (Kyte–Doolittle) Scale") +            theme(plot.title    = element_text(face = "bold"),
+        axis.title    = element_text(face = "bold"),
+        axis.text.x   = element_text(face = "bold"), axis.line   = element_line(linewidth = 0.5))
+
+grid.arrange(plot3, plot4, ncol = 2)
+
+```
+
+## Limitations
+
+This analysis is descriptive and is limited to the 20 canonical amino acids represented by the selected reference data. Hydrophobicity is represented using the Kyte–Doolittle scale and therefore reflects one established hydropathy parameterization rather than a universal, context-independent physical measurement. The reported pI values are computed by applying the Bjellqvist pI-prediction model — designed and calibrated to predict the isoelectric point of complete protein sequences from their amino acid composition — to each amino acid as an isolated single-residue input. This produces a well-defined, reproducible value, but because the model's terminal-group pKa constants are generic parameters tuned for whole proteins rather than the specific α-amino/α-carboxyl pKa of a free amino acid, these values differ systematically from the classical free-amino-acid pI figures found in biochemistry references, and should not be conflated with them.
+
+The charge variable represents a categorical acid–base classification rather than a sequence-level calculation of net charge. Amino-acid protonation is pH-dependent, and residues such as histidine cannot be fully characterized by a fixed charge assignment across physiological conditions. The reference properties also do not capture the behavior of individual residues within a specific protein environment, where neighboring residues, solvent exposure, electrostatic interactions, membrane environment, tertiary structure, and post-translational modification can alter their behavior.
+
+The EGFR composition analysis is limited to the canonical P00533 sequence and summarizes residue counts using physicochemical categories that are not mutually exclusive. These categories should therefore not be interpreted as a partition of the protein's total residues. The analysis does not incorporate residue-level structural context, sequence conservation, post-translational modifications, or functional consequences.
+
+The EGFR kinase-domain analysis uses the domain boundaries annotated by UniProt and a 20-residue sliding window to calculate local Kyte–Doolittle hydrophobicity. Each value represents the hydropathy of a sequence window rather than an individual residue, and the resulting profile does not directly measure solvent accessibility, membrane insertion, structural packing, catalytic activity, or ligand binding. The domain-level analysis therefore describes sequence-derived hydropathy patterns rather than structural or functional properties of the kinase domain.
+
+Consequently, the results should be interpreted as a compact representation of amino-acid physicochemical reference data and sequence-derived EGFR properties, and as a demonstration of R-based biological data analysis rather than as a predictive model of protein structure or function.
+
+## Data sources
+
+- Osorio, D., Rondón-Villarreal, P. & Torres, R. (2015). Peptides: A package for data mining of antimicrobial   peptides. *The R Journal*, 7(1), 4–14.
+- `Peptides` R package, version 2.4.6, documentation and data objects used for amino-acid physicochemical       calculations.
+- UniProt Consortium. UniProtKB P00533 — Epidermal growth factor
+  receptor (EGFR), Homo sapiens. The canonical sequence was used for
+  EGFR composition analysis, and the UniProt-annotated protein kinase
+  domain (residues 712–979) was used for the local hydrophobicity
+  analysis (PROSITE-ProRule: PRU00159).
+  
