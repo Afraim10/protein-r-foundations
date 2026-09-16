@@ -243,14 +243,14 @@ Consequently, the results should be interpreted as a compact representation of a
 
 ## Data sources
 
-- Osorio, D., Rondón-Villarreal, P. & Torres, R. (2015). Peptides: A package for data mining   of antimicrobial   peptides. *The R Journal*, 7(1), 4–14.
+- [Osorio, D., Rondón-Villarreal, P. & Torres, R. (2015). Peptides: A package for data mining   of antimicrobial   peptides.](https://www.researchgate.net/publication/271828827_Peptides_A_Package_for_Data_Mining_of_Antimicrobial_Peptides) *The R Journal*, 7(1), 4–14.
 - `Peptides` R package, version 2.4.6, documentation and data objects used for amino-acid   
   physicochemical calculations.
-- UniProt Consortium. UniProtKB P00533 — Epidermal growth factor
-  receptor (EGFR), Homo sapiens. The canonical sequence was used for
+- [UniProt Consortium. UniProtKB P00533 — Epidermal growth factor
+  receptor (EGFR), Homo sapiens.](https://www.uniprot.org/uniprotkb/P00533/entry) The canonical sequence was used for
   EGFR composition analysis, and the UniProt-annotated protein kinase
   domain (residues 712–979) was used for the local hydrophobicity
   analysis [PROSITE-ProRule: PRU00159](https://prosite.expasy.org/rule/PRU00159).
 - [Hanks, S. K., & Hunter, T. (1995). The eukaryotic protein kinase superfamily:
-  kinase (catalytic) domain structure and classification. FASEB Journal, 9(8), 576–596.](https://doi.org/10.1096/fasebj.9.8.7768349)
+  kinase (catalytic) domain structure and classification.](https://doi.org/10.1096/fasebj.9.8.7768349) FASEB Journal, 9(8), 576–596.
   
