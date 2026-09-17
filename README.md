@@ -42,6 +42,10 @@ the roadmap. For the actual research portfolio:
 
 ## Structure
 
+<p align="left">
+  <img src="assets/r-architecture-diagram.png" alt="Architecture diagram: Base R runtime executes checkpoints 01–06 (codon translator, primer Tm, residue indexing, GC ranking), which feed the amino-acid properties checkpoints and finally the Quarto publication rendering the HTML and PDF reports" height="560">
+</p>
+
 | Checkpoint | Concept | Problem |
 |---|---|---|
 | 01 | Objects, functions, scripts | Primer melting temperature (Wallace rule) |
