@@ -50,17 +50,24 @@ the roadmap. For the actual research portfolio:
 | 04 | Indexing, logicals, `%in%` | Residue position lookup in a toy protein sequence |
 | 05 | Base R plotting | Bar plot of an amino acid property |
 | 06 | Programming basics — conditionals, functions, loops, vectorization | Codon-to-amino-acid translator |
-| final | ggplot2 (short detour beyond the course itself) | Amino Acid Properties Dashboard — Project 0-B in the master plan |
+| final | ggplot2 + Quarto (short detour beyond the course itself) | [Amino Acid Physicochemical Properties](https://afraim10.github.io/protein-r-foundations/final/amino_acid_properties.html) — Project 0-B in the master plan |
 
-Full problem statements for each checkpoint are in `CHECKPOINTS.md`.
+### **Preview:**
+
+![Hydrophobicity of the 20 Canonical Amino Acids](final/Hydrophobicity%20of%20the%2020%20Canonical%20Amino%20Acids.png)
+
+Full analysis: [live page](https://afraim10.github.io/protein-r-foundations/final/amino_acid_properties.html) · [PDF](final/amino_acid_properties.pdf) · [source](final/amino_acid_properties.qmd)
+
 
 ## Environment
 
 Base R only through Checkpoint 06 — no external packages, matching what the
-course itself covers. The final project additionally uses `ggplot2`. R
-version is noted at the top of each script rather than pinned in a separate
-environment file; a repo this size doesn't need the reproducibility
-infrastructure the EGFR repo does.
+course itself covers. The final project is a Quarto document (`.qmd`) using
+`ggplot2`, `Peptides`, `ggrepel`, `dplyr`, `tibble`, `readr`, and
+`gridExtra`; each package's role is inspected and justified inline in the
+document itself rather than assumed. R version is noted at the top of each
+script rather than pinned in a separate environment file; a repo this size
+doesn't need the reproducibility infrastructure the EGFR repo does.
 
 ## How this was done
 
@@ -72,8 +79,8 @@ script upfront.
 
 ## Status
 
-In progress. Checkpoints are added as the course is completed, section by
-section.
+Complete. All checkpoints and the final project were finished section by
+section as the course progressed.
 
 - [x] Checkpoint 01 — Primer melting temperature (Wallace rule)
 - [x] Checkpoint 02 — Amino acid property table (Kyte-Doolittle hydrophobicity)
